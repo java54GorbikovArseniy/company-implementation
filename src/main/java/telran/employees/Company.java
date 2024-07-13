@@ -1,4 +1,4 @@
-package employees;
+package telran.employees;
 
 public interface Company extends Iterable<Employee> {
 
@@ -9,5 +9,6 @@ public interface Company extends Iterable<Employee> {
     public int getDepartmentBudget(String department);
     public String[] getDepartments();
     public Manager[] getManagersWithMostFactor();
-
+    public void save(String filePathStr);
+    public void restore(String filePathStr);
 }

@@ -1,8 +1,12 @@
-package employees;
+package telran.employees;
 
+import org.json.JSONObject;
+import telran.io.Persistable;
+
+import java.io.*;
 import java.util.*;
 
-public class CompanyMapsImpl implements Company {
+public class CompanyMapsImpl implements Company, Persistable {
 
     private TreeMap<Long, Employee> employees = new TreeMap<>();
     private HashMap<String, List<Employee>> employeesDepartment = new HashMap<>();
@@ -90,6 +94,31 @@ public class CompanyMapsImpl implements Company {
         return factorManagers.isEmpty()
                 ? new Manager[0]
                 : factorManagers.firstEntry().getValue().toArray(new Manager[0]);
+    }
+
+    @Override
+    public void save(String filePathStr) {
+        try (FileWriter jsonFile = new FileWriter(filePathStr)){
+            for (Employee employee : employees.values()) {
+                jsonFile.write(employee.getJSON() + "\n");
+            }
+            jsonFile.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("Can't save file: wrong file name or file type", e);
+        }
+    }
+
+    @Override
+    public void restore(String filePathStr) {
+        try (BufferedReader readFromJsonFile = new BufferedReader(new FileReader(filePathStr))) {
+            String jsonStringLine;
+            while ((jsonStringLine = readFromJsonFile.readLine()) != null) {
+                Employee employee = (Employee) new Employee().setObject(jsonStringLine);
+                addEmployee(employee);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Can't restore file: wrong file name or file type", e);
+        }
     }
 
     @Override
