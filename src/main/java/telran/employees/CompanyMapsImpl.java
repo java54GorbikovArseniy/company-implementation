@@ -98,11 +98,8 @@ public class CompanyMapsImpl implements Company, Persistable {
 
     @Override
     public void save(String filePathStr) {
-        try (FileWriter jsonFile = new FileWriter(filePathStr)){
-            for (Employee employee : employees.values()) {
-                jsonFile.write(employee.getJSON() + "\n");
-            }
-            jsonFile.flush();
+        try (PrintWriter jsonFile = new PrintWriter(filePathStr)){
+            for (Employee employee : employees.values()) jsonFile.write(employee.getJSON() + "\n");
         } catch (IOException e) {
             throw new RuntimeException("Can't save file: wrong file name or file type", e);
         }
@@ -111,11 +108,7 @@ public class CompanyMapsImpl implements Company, Persistable {
     @Override
     public void restore(String filePathStr) {
         try (BufferedReader readFromJsonFile = new BufferedReader(new FileReader(filePathStr))) {
-            String jsonStringLine;
-            while ((jsonStringLine = readFromJsonFile.readLine()) != null) {
-                Employee employee = (Employee) new Employee().setObject(jsonStringLine);
-                addEmployee(employee);
-            }
+            readFromJsonFile.lines().map(jsonStringLine -> (Employee) new Employee().setObject(jsonStringLine)).forEach(this::addEmployee);
         } catch (IOException e) {
             throw new RuntimeException("Can't restore file: wrong file name or file type", e);
         }
