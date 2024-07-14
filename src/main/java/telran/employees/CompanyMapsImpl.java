@@ -1,9 +1,11 @@
 package telran.employees;
 
-import org.json.JSONObject;
 import telran.io.Persistable;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class CompanyMapsImpl implements Company, Persistable {
@@ -98,7 +100,7 @@ public class CompanyMapsImpl implements Company, Persistable {
 
     @Override
     public void save(String filePathStr) {
-        try (PrintWriter jsonFile = new PrintWriter(filePathStr)){
+        try (PrintWriter jsonFile = new PrintWriter(filePathStr)) {
             for (Employee employee : employees.values()) jsonFile.write(employee.getJSON() + "\n");
         } catch (IOException e) {
             throw new RuntimeException("Can't save file: wrong file name or file type", e);
